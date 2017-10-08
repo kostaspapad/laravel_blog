@@ -3,7 +3,6 @@
 namespace App\Notifications;
 
 use Carbon\Carbon;
-use App\Notifications\CustomDbChannel;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -33,16 +32,13 @@ class NewPrivateMessage extends Notification
     public function via($notifiable)
     {
         return ['database'];
-        //return [CustomDbChannel::class];
     }
 
     public function toDatabase($notifiable)
-    {
+    {       
         return [
-            'repliedTime'=>Carbon::now(),
-            'sender'=>$this->message->getUserId(),
-            'category' => $this->message->getUserId(),
-            //'active' => notifiable
+            'repliedTime' => Carbon::now(),
+            'message'     => $this->message
         ];
     }
 }

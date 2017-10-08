@@ -8,12 +8,15 @@
                 <div class="panel-heading">Dashboard</div>
 
                 <div class="panel-body">
-                    {{--  @if (session('status'))
+                    @if (session('status'))
                         <div class="alert alert-success">
                             {{ session('status') }}
                         </div>
-                    @endif  --}}
-                     <a href="/posts/create" class="btn btn-primary">Create post</a>
+                    @endif
+                    {{--  Show only if user has create permissions  --}}
+                    @if(Entrust::can('create'))
+                        <a href="/posts/create" class="btn btn-primary">Create post</a>
+                    @endif
                     <h1>Your blog posts</h1>
                     @if(count($posts) > 0)
                         <table class="table table-striped">
@@ -25,12 +28,20 @@
                             @foreach($posts as $post)
                                 <tr>
                                     <td>{{$post->title}}</td>
-                                    <td><a href="/posts/{{$post->id}}/edit" class="btn btn-default"></a>Edit</td>
                                     <td>
-                                        {!! Form::open(['action' => ['PostsController@destroy', $post->id], '_method' => 'POST', 'class' => 'pull-right']) !!}
-                                            {{Form::hidden('_method', 'DELETE')}}
-                                            {{Form::submit('Delete', ['class' => 'btn btn-danger'])}}
-                                        {!! Form::close() !!}
+                                        {{--  Show only if user has edit permissions  --}}
+                                        @if(Entrust::can('edit'))
+                                            <a href="/posts/{{$post->id}}/edit" class="btn btn-warning">Edit</a>
+                                        @endif
+                                    </td>
+                                    <td>
+                                        {{--  Show only if user has delete permissions  --}}
+                                        @if(Entrust::can('delete'))
+                                            {!! Form::open(['action' => ['PostsController@destroy', $post->id], '_method' => 'POST', 'class' => 'pull-right']) !!}
+                                                {{Form::hidden('_method', 'DELETE')}}
+                                                {{Form::submit('Delete', ['class' => 'btn btn-danger'])}}
+                                            {!! Form::close() !!}
+                                        @endif
                                     </td>
                                 </tr>
                             @endforeach

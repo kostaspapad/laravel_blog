@@ -26,4 +26,9 @@ class NotificationsController extends Controller
         
         return view('usernotifications.index')->with('userNotification', $userNotification); 
     }
+
+    public function delete($notificationId)
+    {
+        
+    }
 }

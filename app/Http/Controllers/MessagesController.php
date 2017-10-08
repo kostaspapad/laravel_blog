@@ -76,6 +76,7 @@ class MessagesController extends Controller
         // inserted to database.
         $elasticsearchData = [
             'body' => [
+                'message_id' => $message->id,
                 'user_sender_id' => $senderID,
                 'user_receiver_id' => $receiverID,
                 'notification_id' => $lastNotificationId,
@@ -84,7 +85,8 @@ class MessagesController extends Controller
                 'email_sender' => User::find($senderID)->email,
                 'email_receiver' => User::find($receiverID)->email,
                 'title' => $message->title,
-                'body' => $message->body
+                'body' => $message->body,
+                //'state' => [ 'created_at' => $]
             ],
             'index' => 'blog',
             'type' => 'message',

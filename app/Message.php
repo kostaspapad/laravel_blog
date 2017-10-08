@@ -12,10 +12,6 @@ class Message extends Model
     public function getUserId(){
         return $this->user_id;
     }
-    
-    public function getProfileId(){
-        return $this->profile_id;
-    }
 
     public function getTitle(){
         return $this->title;

@@ -27,9 +27,8 @@ class NewPost extends Notification
     public function toDatabase($notifiable)
     {
         return [
-            //'repliedTime'=>Carbon::now(),
-            'post' => $this->post,
-            'user' => notifiable
+            'repliedTime' => Carbon::now(),
+            'post'        => $this->post,
         ];
     }
 }

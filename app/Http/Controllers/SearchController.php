@@ -44,10 +44,59 @@ class SearchController extends Controller
         // $this->middleware('permission:delete', ['only' => ['show', 'delete']]);
     }
 
-    public function index(){
-        dd($string);
+    public function searchPosts(Request $request){
+        if (Request::ajax()){
+
+            // Get user input
+            $searchTerm = $request->input('searchTerm');
+
+            $params = [
+                'index' => 'blog',
+                'type' => 'post',
+                'body' => [
+                    'query' => [
+                        'query_string' => [
+                            'query' => $searchTerm
+                        ]
+                    ]
+                ]
+            ];
+            
+            $client = ClientBuilder::create()->build();
+            $response = $client->search($params);
+            
+            // If client return data return data else return 0
+            if($response['hits']['total'] !== 0){
+
+                // Get hits
+                $hits = count($response['hits']['hits']);
+
+                // Init i, result
+                $result = null;
+                $i = 0;
+                
+                // Loop for every hit and insert _source data to $result
+                while ($i < $hits) {
+                    $result[$i] = $response['hits']['hits'][$i]['_source'];
+                    $i++;
+                }
+                dd($result);
+                //return view('messages.searchresponse', compact('result'));
+                $returnHTML = view('messages.searchresponse')->with('result', $result)->render();
+                return response()->json(array('success'=>true, 'html'=>$returnHTML));
+                //return View::make('messages.searchresponse')->with('result', $result);
+                //return $result;
+
+            } else {
+                return 0;
+            }
+            
+        } else {
+            return Redirect::back();
+        }
     }
-    public function search(Request $request){
+
+    public function searchMessages(Request $request){
         // Get user input
         $searchTerm = $request->input('searchTerm');
          
@@ -66,15 +115,36 @@ class SearchController extends Controller
         $client = ClientBuilder::create()->build();
         $response = $client->search($params);
         
-        $hits = count($response['hits']['hits']);
-        $result = null;
-        $i = 0;
-         
-        while ($i < $hits) {
-            $result[$i] = $response['hits']['hits'][$i]['_source'];
-            $i++;
+        // If client return data return data else return 0
+        if($response['hits']['total'] !== 0){
+
+            // Get hits
+            $hits = count($response['hits']['hits']);
+
+            // Init i, result
+            $result = null;
+            $i = 0;
+            
+            // Loop for every hit and insert _source data to $result
+            while ($i < $hits) {
+                $result[$i] = $response['hits']['hits'][$i]['_source'];
+                $i++;
+            }
+            
+            //dd($result);
+            //return view('messages.searchresponse', compact('result'));
+            //$returnHTML = view('messages.searchresponse')->with('result', $result);
+            
+            
+            //$returnHTML = view('messages.searchresponse', compact('result'));
+            //return response()->json(array('success'=>true, 'html'=>$returnHTML));
+            
+            $returnHTML = \View::make('messages.searchresponse')->with('result', $result);
+            return $returnHTML->renderSections()['content'];
+
+        } else {
+            return 0;
         }
-        
-        return $result;
+
     }
 }

@@ -15,15 +15,18 @@
 
 Route::get('/', 'PagesController@index');
 Route::get('/about', 'PagesController@about');
-Route::get('/services', 'PagesController@services');
 
+Route::get('/toggle/{id}', 'PostsController@togglePostVisibility');
 Route::resource('/posts', 'PostsController');
+//Route::get('toggle/{id}',         ['as' => 'toggle',   'uses' => 'PostsController@togglePostVisibility']);
+
 Route::resource('/users', 'UsersController');
 Route::resource('/messages', 'MessagesController');
 Route::get('/usernotifications/{id}', 'NotificationsController@index');
-Route::post('search', 'SearchController@search');
+Route::post('searchmessages', 'SearchController@searchMessages');
+Route::post('searchposts', 'SearchController@searchPosts');
 Route::get('/dashboard', 'DashboardController@index');
-
+Route::get('/notifications/{id}','NotificationController@delete');
 Auth::routes();
 
 

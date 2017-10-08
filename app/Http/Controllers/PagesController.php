@@ -45,12 +45,4 @@ class PagesController extends Controller
         $title = 'About us!';
         return view('pages.about')->with('title', $title);
     }
-
-    public function services(){
-        $data = array(
-            'title' => 'Services!',
-            'services' => ['Web design', 'Programming', 'SEO']
-        );
-        return view('pages.services')->with($data);
-    }
 }

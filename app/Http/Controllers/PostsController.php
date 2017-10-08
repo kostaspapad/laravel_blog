@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Post;
+use App\User;
 use DB;
 use Illuminate\Support\Facades\Storage;
 use \Waavi\Sanitizer\Sanitizer;
@@ -54,25 +55,11 @@ class PostsController extends Controller
      */
     public function index()
     {
-        // Select all posts
-        // $posts = Post::all();
-
-        // With where. Here I choose with title
-        // return Post::where('title', 'Post two')->get();
-        
         // Select all and order by
+        // With paginator. Must have {{$posts->links()}} in view
         $posts = Post::orderBy('created_at','desc')->paginate(10);
 
-        // Select one
-        // $posts = Post::orderBy('title', 'asc')->take(1)->get();
-        
-        // With database query
-        // $posts = DB::select('SELECT * FROM posts');
-
-        // With paginator. Must have {{$posts->links()}} in view
-        // $posts = Post::orderBy('title', 'asc')->paginate(1);
         return view('posts.index')->with('posts', $posts);
-
     }
 
     /**
@@ -94,11 +81,11 @@ class PostsController extends Controller
     public function store(Request $request)
     {
         // Validation
-        // Title and body required
         // Image is optional, this is done with nullable, max size with max
         $this->validate($request, [
             'title' => 'required',
             'body' => 'required',
+            'category' => 'required',
             'cover_image' => 'image|nullable|max:1999'
         ]);
 
@@ -106,6 +93,7 @@ class PostsController extends Controller
         $data = [
             'title'    =>  $request->request->get('title'),
             'body'     =>  $request->request->get('body'),
+            'category' =>  $request->request->get('category')
         ];
 
         $filters = [
@@ -140,25 +128,38 @@ class PostsController extends Controller
 
         // Create post
         $post = new Post();
-        // Old 
-        // $post->title = $request->input('title');
-        // $post->body = $request->input('body');
 
         // New with waafi sanitizer
         $post->title = $sanitizedData['title'];
         $post->body = $sanitizedData['body'];
+        $post->category = $sanitizedData['category'];
 
         $post->user_id = auth()->user()->id;
+        $post->active =  true;
         $post->cover_image = $filenameToStore;
 
         // Save
         $post->save();
+
+        // Notify all the users about the new post in blog
+        $allUsers = User::all();
+        foreach($allUsers as $user){
+            $user->notify(new NewPost($post));
+        }
 
         // // Prepare data for elasticsearch
         // $data = [
         //     'body' => [
         //         'title' => $post->title,
         //         'body' => $post->body
+        //         'post_id' => $post->
+        //         'post_user_id' => $post->
+        //         'post_body' => $post->
+        //         'post_notification_id' => $post->
+        //         'post_timestamps' => $post->
+        //         'post_title' => $post->title,
+        //         'post_active' => $post->active,
+        //         'post_category' => $post->category,
         //     ],
         //     'index' => 'blog',
         //     'type' => 'post',
@@ -171,7 +172,7 @@ class PostsController extends Controller
         // $return = $client->index($data);
         
         // Notify users for new post
-        auth()->user()->notify(new NewPost($post));
+        //auth()->user()->notify(new NewPost($post));
 
         // Redirect
         return redirect('/posts')->with('success', 'Post created');
@@ -251,6 +252,7 @@ class PostsController extends Controller
         // Create post
         $post->title = $request->input('title');
         $post->body = $request->input('body');
+
         if($request->hasFile('cover_image')){
             $post->cover_image = $filenameToStore;
         }
@@ -258,6 +260,12 @@ class PostsController extends Controller
         // Save
         $post->save();
 
+        // Notify all users for the new post
+        $allUsers = User::all();
+        foreach ($allUsers as $user) {
+            $user->notify(new NewPost($post));
+        }
+        
         // Redirect
         return redirect('/posts')->with('success', 'Post updated');
     }
@@ -286,12 +294,26 @@ class PostsController extends Controller
         return redirect('/posts')->with('success', 'Post Removed');
     }
 
-    protected function checkRankRefresh($posts)
+    /**
+     * Get post state and toggle it
+     *
+     * @param  int  $id
+     */
+    protected function togglePostVisibility($id)
     {
-        //if(count($posts->user) > 0)
-        
-        dd($posts);
-        //$comments = App\Post::find(1)->comments()->where('title', 'foo')->first()
+        // Find post
+        $post = Post::findOrFail($id);
+
+        // Reverse it true/false
+        $post->active = !$post->active;
+
+        $post->save();
+
+        if($post->active){
+            return redirect('/posts')->with('success', 'Post activated');
+        }else{
+            return redirect('/posts')->with('success', 'Post de-activated');
+        }
     }
 }
 
