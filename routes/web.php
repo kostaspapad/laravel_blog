@@ -23,8 +23,10 @@ Route::resource('/posts', 'PostsController');
 Route::resource('/users', 'UsersController');
 Route::resource('/messages', 'MessagesController');
 Route::get('/usernotifications/{id}', 'NotificationsController@index');
+
 Route::post('searchmessages', 'SearchController@searchMessages');
 Route::post('searchposts', 'SearchController@searchPosts');
+
 Route::get('/dashboard', 'DashboardController@index');
 Route::get('/notifications/{id}','NotificationController@delete');
 Auth::routes();

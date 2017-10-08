@@ -146,25 +146,25 @@ class PostsController extends Controller
         foreach($allUsers as $user){
             $user->notify(new NewPost($post));
         }
-
-        // // Prepare data for elasticsearch
-        // $data = [
-        //     'body' => [
-        //         'title' => $post->title,
-        //         'body' => $post->body
-        //         'post_id' => $post->
-        //         'post_user_id' => $post->
-        //         'post_body' => $post->
-        //         'post_notification_id' => $post->
-        //         'post_timestamps' => $post->
-        //         'post_title' => $post->title,
-        //         'post_active' => $post->active,
-        //         'post_category' => $post->category,
-        //     ],
-        //     'index' => 'blog',
-        //     'type' => 'post',
-        //     'id' => $post->user_id,
-        // ];
+        
+        // Prepare data for elasticsearch
+        $data = [
+            'body' => [
+                'title' => $post->title,
+                'body' => $post->body,
+                'post_id' => $post->id,
+                'post_user_id' => $post->user_id,
+                'post_body' => $post->body,
+                'post_notification_id' => $post->
+                'post_timestamps' => $post->
+                'post_title' => $post->title,
+                'post_active' => $post->active,
+                'post_category' => $post->category,
+            ],
+            'index' => 'blog',
+            'type' => 'post',
+            'id' => $post->user_id,
+        ];
         
         
         // // Insert post data to elasticsearch

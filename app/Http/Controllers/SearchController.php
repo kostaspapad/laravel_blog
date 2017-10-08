@@ -45,54 +45,46 @@ class SearchController extends Controller
     }
 
     public function searchPosts(Request $request){
-        if (Request::ajax()){
 
-            // Get user input
-            $searchTerm = $request->input('searchTerm');
-
-            $params = [
-                'index' => 'blog',
-                'type' => 'post',
-                'body' => [
-                    'query' => [
-                        'query_string' => [
-                            'query' => $searchTerm
-                        ]
+        // Get user input
+        $searchTerm = $request->input('searchTerm');
+        
+        $params = [
+            'index' => 'blog',
+            'type' => 'post',
+            'body' => [
+                'query' => [
+                    'query_string' => [
+                        'query' => $searchTerm
                     ]
                 ]
-            ];
+            ]
+        ];
+        
+        $client = ClientBuilder::create()->build();
+        $response = $client->search($params);
+        dd($response);
+        // If client return data return data else return 0
+        if($response['hits']['total'] !== 0){
+
+            // Get hits
+            $hits = count($response['hits']['hits']);
+
+            // Init i, result
+            $result = null;
+            $i = 0;
             
-            $client = ClientBuilder::create()->build();
-            $response = $client->search($params);
-            
-            // If client return data return data else return 0
-            if($response['hits']['total'] !== 0){
-
-                // Get hits
-                $hits = count($response['hits']['hits']);
-
-                // Init i, result
-                $result = null;
-                $i = 0;
-                
-                // Loop for every hit and insert _source data to $result
-                while ($i < $hits) {
-                    $result[$i] = $response['hits']['hits'][$i]['_source'];
-                    $i++;
-                }
-                dd($result);
-                //return view('messages.searchresponse', compact('result'));
-                $returnHTML = view('messages.searchresponse')->with('result', $result)->render();
-                return response()->json(array('success'=>true, 'html'=>$returnHTML));
-                //return View::make('messages.searchresponse')->with('result', $result);
-                //return $result;
-
-            } else {
-                return 0;
+            // Loop for every hit and insert _source data to $posts
+            while ($i < $hits) {
+                $posts[$i] = $response['hits']['hits'][$i]['_source'];
+                $i++;
             }
             
+            // Render and return view as response to ajax
+            return view('layouts.partials.search.blog_post_response')->with('posts', $posts);
+
         } else {
-            return Redirect::back();
+            return 0;
         }
     }
 
@@ -131,20 +123,11 @@ class SearchController extends Controller
                 $i++;
             }
             
-            //dd($result);
-            //return view('messages.searchresponse', compact('result'));
-            //$returnHTML = view('messages.searchresponse')->with('result', $result);
-            
-            
-            //$returnHTML = view('messages.searchresponse', compact('result'));
-            //return response()->json(array('success'=>true, 'html'=>$returnHTML));
-            
-            $returnHTML = \View::make('messages.searchresponse')->with('result', $result);
-            return $returnHTML->renderSections()['content'];
+            // Render and return view as response to ajax
+            return view('layouts.partials.search.message_response')->with('result', $result);
 
         } else {
             return 0;
         }
-
     }
 }
