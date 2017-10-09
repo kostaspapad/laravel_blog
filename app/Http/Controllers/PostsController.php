@@ -155,11 +155,16 @@ class PostsController extends Controller
                 'post_id' => $post->id,
                 'post_user_id' => $post->user_id,
                 'post_body' => $post->body,
-                'post_notification_id' => $post->
-                'post_timestamps' => $post->
+                // Not used because has many recipients
+                //'post_notification_id' => $post->
+                'post_timestamps' => [
+                    'created_at' => $post->created_at, 
+                    'updated_at' => $post->updated_at   
+                ],
                 'post_title' => $post->title,
                 'post_active' => $post->active,
                 'post_category' => $post->category,
+                'post_cover_image'=>$post->cover_image
             ],
             'index' => 'blog',
             'type' => 'post',
@@ -167,12 +172,9 @@ class PostsController extends Controller
         ];
         
         
-        // // Insert post data to elasticsearch
-        // $client = ClientBuilder::create()->build();
-        // $return = $client->index($data);
-        
-        // Notify users for new post
-        //auth()->user()->notify(new NewPost($post));
+        // Insert post data to elasticsearch
+        $client = ClientBuilder::create()->build();
+        $return = $client->index($data);
 
         // Redirect
         return redirect('/posts')->with('success', 'Post created');

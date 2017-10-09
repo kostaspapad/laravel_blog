@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-//require 'vendor/autoload.php';
 use Elasticsearch\ClientBuilder;
     
 
@@ -63,7 +62,7 @@ class SearchController extends Controller
         
         $client = ClientBuilder::create()->build();
         $response = $client->search($params);
-        dd($response);
+        // dd($response);
         // If client return data return data else return 0
         if($response['hits']['total'] !== 0){
 
@@ -79,7 +78,7 @@ class SearchController extends Controller
                 $posts[$i] = $response['hits']['hits'][$i]['_source'];
                 $i++;
             }
-            
+            //dd($posts);
             // Render and return view as response to ajax
             return view('layouts.partials.search.blog_post_response')->with('posts', $posts);
 
