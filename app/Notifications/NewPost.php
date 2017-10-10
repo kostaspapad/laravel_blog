@@ -31,4 +31,8 @@ class NewPost extends Notification
             'post'        => $this->post,
         ];
     }
+
+    public function getNewPost(){
+        return $this->post;
+    }
 }

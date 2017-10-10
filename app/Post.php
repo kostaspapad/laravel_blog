@@ -15,6 +15,9 @@ class Post extends Model
         // Timestamps
         public $timestamps = true;
 
+        public function getPost(){
+            return $this;
+        }
         // A single post belongsTo the user
         public function user(){
             return $this->belongsTo('App\User');
