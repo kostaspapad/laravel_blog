@@ -54,15 +54,24 @@ class SearchController extends Controller
             'body' => [
                 'query' => [
                     'query_string' => [
-                        'query' => $searchTerm
+                        'query' => '*'.$searchTerm .'*',
+                        "fields"=> ["post_title", "post_body", "post_category"]
                     ]
                 ]
             ]
         ];
+        // {
+        //     "query": {
+        //         "query_string": {
+        //             "query": "Asd*",
+        //             "fields": ["post_title", "post_body", "post_category"]
+        //         }
+        //     }
+        // }
         
         $client = ClientBuilder::create()->build();
         $response = $client->search($params);
-        // dd($response);
+        
         // If client return data return data else return 0
         if($response['hits']['total'] !== 0){
 
@@ -97,7 +106,8 @@ class SearchController extends Controller
             'body' => [
                 'query' => [
                     'query_string' => [
-                        'query' => $searchTerm
+                        'query' => '*'.$searchTerm .'*',
+                        "fields"=> ["title", "body"]
                     ]
                 ]
             ]

@@ -39,6 +39,8 @@
                         <a href="/posts" class="btn btn-default pull-right">Go Back</a>
                     </div>
                 {!! Form::close() !!}
+                @else
+                    {{--  Insert user profile code  --}}
                 @endif
             @endif 
         </div>

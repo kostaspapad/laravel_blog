@@ -32,7 +32,7 @@ class PagesController extends Controller
     }
 
     public function index(){
-        $title = 'Welcome to laravel!';
+        $title = 'This blog is';
         //1. Me to compact stelno vars sto view
         #return view('pages.index', compact('title'));
         

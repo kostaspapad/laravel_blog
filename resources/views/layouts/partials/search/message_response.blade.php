@@ -40,5 +40,10 @@
         <span class="label label-info">Receiver Email:</span>
         {{$r['email_receiver']}}
     </div>
+    
+    <div class="btn-group btn-group-xs" role="group" aria-label="...">
+        <a href="/messages/{{$r['message_id']}}" class="btn btn-default">Message</a>
+        <a href="/usernotifications/{{$r['notification_id']}}" class="btn btn-default">Notification</a>
+    </div>
 </div>
 @endforeach

@@ -41,4 +41,8 @@ class NewPrivateMessage extends Notification
             'message'     => $this->message
         ];
     }
+
+    public function getPrivateMessage(){
+        return $this;
+    }
 }

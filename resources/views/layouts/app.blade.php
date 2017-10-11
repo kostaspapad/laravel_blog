@@ -8,10 +8,26 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>{{ config('app.name', 'Blog') }}</title>
+    {{--  Count how many images exists in img/ folder and choose a random one 
+          for background.  --}}
+    @php
+        $files = Storage::allFiles('public/img/');
+        $randomNum = rand(1, count($files));
+        $pathWithName = 'assets/img/' . $randomNum . '.jpg';
+    @endphp
 
+    <style>
+        body {
+            background-image: url("{{ asset($pathWithName) }}");
+            background-color: #cccccc;
+        }
+    </style>
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    {{--  <link rel="stylesheet"          // Animate.css
+    href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">  --}}
+
 </head>
 <body>
     <div id="app">

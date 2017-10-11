@@ -13,15 +13,17 @@
                     <br><br>
                 </div>
                 @foreach($users as $user)
-                    <div class="well">
-                        <div class="row">
-                            <div class="col-md-8 col-sm-8">
-                                <h3><a href="/users/{{$user->id}}">{{$user->name}}</a></h3>
-                                <small>Registered at {{$user->created_at}}</small>
+                    {{--  Don't show the current logged in user  --}}
+                    @if($user->id != Auth::user()->id)
+                        <div class="well">
+                            <div class="row">
+                                <div class="col-md-8 col-sm-8">
+                                    <h3><a href="/users/{{$user->id}}">{{$user->name}}</a></h3>
+                                    <small>Registered at {{$user->created_at}}</small>
+                                </div>
                             </div>
                         </div>
-                        
-                    </div>
+                    @endif
                 @endforeach
 
                 {{--  To make a paginator.Must have paginate function on controller  --}}

@@ -29,6 +29,8 @@ Route::post('searchposts', 'SearchController@searchPosts');
 
 Route::get('/dashboard', 'DashboardController@index');
 Route::get('/notifications/{id}','NotificationController@delete');
+
+
 Auth::routes();
 
 
