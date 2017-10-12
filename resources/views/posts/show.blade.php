@@ -5,7 +5,7 @@
         <div class="panel-heading">{{$post->title}}</div>
         <div class="panel-body">
             <div class="row">
-                <div class="col-md-4">
+                <div class="col-md-4"> 
                     <img style="width:80%" src="/storage/cover_images/{{$post->cover_image}}">
                 </div>
                 <div class="col-md-8">

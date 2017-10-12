@@ -3,7 +3,7 @@
  *
  * TODO@@ In function togglePostVisibility() the elastic index must field
  *   post_active must be updated too.
- *
+ *        In voting functions update elastic data for votes
  */
 namespace App\Http\Controllers;
 
@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use App\Post;
 use App\User;
 use DB;
+use JavaScript;
 use Illuminate\Support\Facades\Storage;
 use \Waavi\Sanitizer\Sanitizer;
 use Elasticsearch\ClientBuilder;
@@ -63,6 +64,10 @@ class PostsController extends Controller
         // Select all and order by
         // With paginator. Must have {{$posts->links()}} in view
         $posts = Post::orderBy('created_at','desc')->paginate(10);
+
+        Javascript::put([ 
+            'user_id' => $post->user_id, kolisa edo prepi na do pos perno ena post kai oxi olaaa
+        ]);
 
         return view('posts.index')->with('posts', $posts);
     }
@@ -193,7 +198,6 @@ class PostsController extends Controller
     public function show($id)
     {
         $post = Post::find($id);
-        //$this->checkRankRefresh(Post::all());
 
         return view('posts.show')->with('post', $post);   
     }
@@ -318,6 +322,37 @@ class PostsController extends Controller
             return redirect('/posts')->with('success', 'Post activated');
         }else{
             return redirect('/posts')->with('success', 'Post de-activated');
+        }
+    }
+
+    public function upvotePost($postID, $userID){
+        // Only logged in users can vote
+        if(Entrust::hasRole(['owner', 'admin', 'user'])){
+
+
+
+            $post = Post::find($postID);
+            $post->upvotes =+ 1;
+            $post->save();
+
+            return 0;
+
+        } else {
+            return -1;
+        }
+    }
+
+    public function downvotePost($postID, $userID){
+        // Only logged in users can vote
+        if(Entrust::hasRole(['owner', 'admin', 'user'])){
+            $post = Post::find($postID);
+            $post->downvotes =- 1;
+            $post->save();
+
+            return 0;
+
+        } else {
+            return -1;
         }
     }
 }

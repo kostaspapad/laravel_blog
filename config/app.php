@@ -171,6 +171,7 @@ return [
         Collective\Html\HtmlServiceProvider::class,
         Unisharp\Ckeditor\ServiceProvider::class,
         Zizaco\Entrust\EntrustServiceProvider::class,
+        Laracasts\Utilities\JavaScript\JavaScriptServiceProvider,
         /*
          * Application Service Providers...
          */

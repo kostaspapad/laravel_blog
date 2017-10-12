@@ -131,4 +131,80 @@ $(document).ready(function () {
             }
         }
     });
+
+    
+    $("#upvote-icon").click(function(){
+    alert("Hi " + user.user_id);
+        // // Use this else 419 error status code
+        // $.ajaxSetup({
+        //     headers: {
+        //         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        //     }
+        // });
+
+        // e.preventDefault();
+
+        // // Execute ajax request
+        // $.ajax({
+        //     type: 'POST',
+        //     url: 'upvotePost',
+        //     data: formData,
+        //     dataType: 'json',
+
+        //     // If request is successfull
+        //     success: function (data) {
+
+        //         // Check if controller returned no data
+        //         if (data != -1) {
+                    
+        //             // Increase vote
+        //             $(".vote-counter").html(parseInt($('.changeNumber').html(), 10)+1)
+
+        //         }
+        //     },
+
+        //     // If request was not successfull
+        //     error: function (data) {
+        //         console.log(data);
+        //     }
+        // });
+    });
+
+    $("#downvote-icon").click(function(){
+        // Use this else 419 error status code
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+
+        e.preventDefault();
+
+        // Execute ajax request
+        $.ajax({
+            type: 'POST',
+            url: 'downvotePost',
+            data: formData,
+            dataType: 'json',
+
+            // If request is successfull
+            success: function (data) {
+
+                // Check if controller returned no data
+                if (data != -1) {
+
+                    // Reduce vote
+                    $("#vote-container").html(parseInt($('.changeNumber').html(), 10)-1)
+
+                }
+            },
+
+            // If request was not successfull
+            error: function (data) {
+                console.log(data);
+            }
+        });
+    });
+
+
 });

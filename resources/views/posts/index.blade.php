@@ -16,8 +16,29 @@
                     @if(Entrust::hasRole('admin'))
                         <div class="well">
                             <div class="row">
-                                <div class="col-md-4 col-sm-4">
-                                    <img style="width:30%" src="/storage/cover_images/{{$post->cover_image}}">
+                                <div class="col-md-1 col-sm-1">
+                                    <div id="vote-container">
+                                        <ul>
+                                            <li>
+                                                <div id="upvote-icon" class="glyphicon glyphicon-arrow-up text-primary"></div>
+                                            </li>
+                                            <li>
+                                                @if($post->upvotes - $post->downvotes > 0)
+                                                    <b class="vote-counter text-primary">  {{$post->upvotes - $post->downvotes}}</b>
+                                                @elseif($post->upvotes - $post->downvotes < 0)
+                                                    <b class="vote-counter text-danger">{{$post->upvotes - $post->downvotes}}</b>
+                                                @else
+                                                    <b class="vote-counter text-default">{{$post->upvotes - $post->downvotes}}</b>
+                                                @endif
+                                            </li>
+                                            <li>
+                                                <div id="downvote-icon" class="glyphicon glyphicon-arrow-down text-danger"></div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-3">
+                                    <img style="width:80%" src="/storage/cover_images/{{$post->cover_image}}">
                                 </div>
                                 <div class="col-md-8 col-sm-8">
                                     <h3><a href="/posts/{{$post->id}}">{{$post->title}}</a></h3>
@@ -66,3 +87,4 @@
         </div> {{-- panel-body  --}}
     </div> {{-- panel panel-info  --}}
 @endsection
+
