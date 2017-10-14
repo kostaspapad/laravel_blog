@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Post;
 use Illuminate\Http\Request;
 use Elasticsearch\ClientBuilder;
     
@@ -84,10 +85,10 @@ class SearchController extends Controller
             
             // Loop for every hit and insert _source data to $posts
             while ($i < $hits) {
-                $posts[$i] = $response['hits']['hits'][$i]['_source'];
+                $posts[$i] = Post::find($response['hits']['hits'][$i]['_source']['post_id']);
                 $i++;
             }
-            //dd($posts);
+            // dd($posts);
             // Render and return view as response to ajax
             return view('layouts.partials.search.blog_post_response')->with('posts', $posts);
 

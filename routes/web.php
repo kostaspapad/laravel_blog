@@ -21,15 +21,15 @@ Route::resource('/posts', 'PostsController');
 //Route::get('toggle/{id}',         ['as' => 'toggle',   'uses' => 'PostsController@togglePostVisibility']);
 
 Route::resource('/users', 'UsersController');
-Route::resource('/userprofile/{id}', 'UserProfileController');
+Route::resource('/userprofile', 'UserProfileController');
 Route::resource('/messages', 'MessagesController');
 Route::get('/usernotifications/{id}', 'NotificationsController@index');
 
 Route::post('searchmessages', 'SearchController@searchMessages');
 Route::post('searchposts', 'SearchController@searchPosts');
 
-Route::post('upvote/{id}', 'PostsController@upvotePost');
-Route::post('downvote/{id}', 'PostsController@downvotePost');
+Route::post('upvote', 'PostsController@upvotePost');
+Route::post('downvote', 'PostsController@downvotePost');
 
 Route::get('/dashboard', 'DashboardController@index');
 Route::get('/notifications/{id}','NotificationController@delete');

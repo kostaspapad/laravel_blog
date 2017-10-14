@@ -1,8 +1,5 @@
 $(document).ready(function () {
 
-    // Send request to
-    var url = "/search";
-
     $("input[name=searchBoxPosts]").keypress(function (e) {
 
         // Save search container initial state. 
@@ -133,8 +130,8 @@ $(document).ready(function () {
     });
 
     
-    $("#upvote-icon").click(function(){
-    alert("Hi " + user.user_id);
+    // $("#upvote-icon").click(function(){
+    // alert("Hi " + user.user_id);
         // // Use this else 419 error status code
         // $.ajaxSetup({
         //     headers: {
@@ -168,7 +165,7 @@ $(document).ready(function () {
         //         console.log(data);
         //     }
         // });
-    });
+    // });
 
     $("#downvote-icon").click(function(){
         // Use this else 419 error status code
@@ -208,3 +205,145 @@ $(document).ready(function () {
 
 
 });
+
+function upvote(postID, userID){
+
+
+    var formData = {
+        postID: postID,
+        userID: userID
+    }
+
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
+    
+    // Execute ajax request
+    $.ajax({
+        type: 'POST',
+        url: 'upvote',
+        data: formData,
+        dataType: 'json',
+        
+        // If request is successfull
+        success: function (data) {
+            // Check if controller returned no data
+            if (data == 0) {
+                // Increment number of votes
+                $("#post-votes-" + postID).html(function(i, val) { return val*1+1 });
+                
+                // Get number of votes for post
+                var counter = parseInt($("#post-votes-" + postID).text(), 10);
+
+                // Adjust class names for coloring
+                votesColor(postID, counter);
+            }
+        },
+
+        // If request was not successfull
+        error: function (data) {
+            console.log(data);
+        }
+    });
+}
+
+function downvote(postID, userID){
+
+    var formData = {
+        postID: postID,
+        userID: userID
+    }
+
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        }
+    });
+
+    // Execute ajax request
+    $.ajax({
+        type: 'POST',
+        url: 'downvote',
+        data: formData,
+        dataType: 'json',
+
+        // If request is successfull
+        success: function (data) {
+
+            // Check if controller returned no data
+            if (data != -1) {
+
+                // Decrease number of votes
+                $("#post-votes-" + postID).html(function(i, val) { return val*1-1 });
+                
+                // Get number of votes for post
+                var counter = parseInt($("#post-votes-" + postID).text(), 10);
+
+                // Adjust class names for coloring
+                votesColor(postID, counter);
+            }
+        },
+
+        // If request was not successfull
+        error: function (data) {
+            console.log(data);
+        }
+    });
+}
+
+function votesColor(postID, counter){
+    console.log("postID:" + postID);
+    console.log("counter:" + counter);
+    var postVotesContainer = $("#post-votes-" + postID)
+    
+    if(counter > 0 && postVotesContainer.hasClass('text-danger')){
+        postVotesContainer.removeClass('text-danger').addClass('text-primary');
+    }
+    if(counter > 0 && postVotesContainer.hasClass('text-default')){
+        postVotesContainer.removeClass('text-default').addClass('text-primary');
+    }
+
+    if(counter == 0 && postVotesContainer.hasClass('text-primary')){
+        postVotesContainer.removeClass('text-primary').addClass('text-default');
+    }
+    if(counter == 0 && postVotesContainer.hasClass('text-danger')){
+        postVotesContainer.removeClass('text-danger').addClass('text-default');
+    }
+
+
+    if(counter < 0 && postVotesContainer.hasClass('text-primary')){
+        postVotesContainer.removeClass('text-primary').addClass('text-danger');
+    }
+    if(counter < 0 && postVotesContainer.hasClass('text-default')){
+        postVotesContainer.removeClass('text-default').addClass('text-danger');
+    }
+
+    // The votes are positive 
+    // if(counter > 0){
+    //     // Check if class is default or danger and change to primary    
+    //     if(postVotesContainer.hasClass("text-default")){
+    //         $("#post-votes-" + postID).removeClass('text-default').addClass('text-primary');
+    //     } else {
+    //         $("#post-votes-" + postID).removeClass('text-danger').addClass('text-primary');
+    //     }
+    // // The votes are negative
+    // }else if(counter < 0){
+    //     // Check if class is default or primary and change to danger
+    //     if(postVotesContainer.hasClass("text-default")){
+    //         $("#post-votes-" + postID).removeClass('text-default').addClass('text-danger');
+    //     } else {
+    //         $("#post-votes-" + postID).removeClass('text-primary').addClass('text-danger');
+    //     }
+    // // The votes are zero
+    // }else{
+    //     // Check if class is primary or danger and change to default
+    //     if(postVotesContainer.hasClass("text-primary")){
+    //         $("#post-votes-" + postID).removeClass('text-primary').addClass('text-default');
+    //     } else {
+    //         $("#post-votes-" + postID).removeClass('text-danger').addClass('text-default');
+    //     }
+    // }
+}

@@ -65,10 +65,6 @@ class PostsController extends Controller
         // With paginator. Must have {{$posts->links()}} in view
         $posts = Post::orderBy('created_at','desc')->paginate(10);
 
-        Javascript::put([ 
-            'user_id' => $post->user_id, kolisa edo prepi na do pos perno ena post kai oxi olaaa
-        ]);
-
         return view('posts.index')->with('posts', $posts);
     }
 
@@ -143,14 +139,15 @@ class PostsController extends Controller
         $post->title = $sanitizedData['title'];
         $post->body = $sanitizedData['body'];
         $post->category = $sanitizedData['category'];
-
+        $post->upvotes = 0;
+        $post->downvotes = 0;
         $post->user_id = auth()->user()->id;
         $post->active =  true;
         $post->cover_image = $filenameToStore;
 
         // Save
         $post->save();
-
+        
         // Notify all the users about the new post in blog
         $allUsers = User::all();
         foreach($allUsers as $user){
@@ -181,8 +178,8 @@ class PostsController extends Controller
         
         
         // Insert post data to elasticsearch
-        $client = ClientBuilder::create()->build();
-        $return = $client->index($data);
+        //$client = ClientBuilder::create()->build();
+        //$return = $client->index($data);
 
         // Redirect
         return redirect('/posts')->with('success', 'Post created');
@@ -261,7 +258,10 @@ class PostsController extends Controller
         // Create post
         $post->title = $request->input('title');
         $post->body = $request->input('body');
+        $post->upvotes = 0;
+        $post->downvotes = 0;
 
+        
         if($request->hasFile('cover_image')){
             $post->cover_image = $filenameToStore;
         }
@@ -325,36 +325,120 @@ class PostsController extends Controller
         }
     }
 
-    public function upvotePost($postID, $userID){
-        // Only logged in users can vote
-        if(Entrust::hasRole(['owner', 'admin', 'user'])){
+    // public function upvotePost(Request $request){
+    //     // Find user from id
+    //     $userID = $request->input('userID');
+    //     $user = User::find($userID);
 
+    //     // Get post id from request
+    //     $postID = $request->input('postID');
+        
+    //     // Only logged in users can vote
+    //     if($user->hasRole(['owner', 'admin', 'user'])){
 
+    //         $post = Post::find($postID);
+            
+            
+    //         // Look if user has voted in this post
+    //         // If user has already voted he cannot vote again
+    //         // except if he upvotes a post he has downvoted
+    //         $votes = DB::table('post_vote')->where([
+    //             ['post_id', '=', $post->id],
+    //             ['user_id', '=', $user->id]
+    //         ])->get();
+        
+    //         if($votes->isEmpty()){
+    //             //if($votes[0]->post_id != $post->id && $votes[0]->user_id != $user->id){
+    //             // User has not voted on this post
 
-            $post = Post::find($postID);
-            $post->upvotes =+ 1;
-            $post->save();
+    //             // Increase vote
+    //             $post->upvotes++;
 
-            return 0;
+    //             // Insert to table the user vote reference
+    //             DB::table('post_vote')->insert(
+    //                 ['post_id' => $post->id,
+    //                  'user_id' => $user->id,
+    //                  'vote_type' => 'upvote'] 
+    //             );
+                
+    //             // Save the modified post table data
+    //             $post->save();
+                
+    //             // Return success as ajax response
+    //             return 0;
 
-        } else {
-            return -1;
-        }
-    }
+    //         }else{
+    //             return 'hasvoted';
+    //         }
+            
+    //     } else {
+    //         return -1;
+    //     }
+    // }
 
-    public function downvotePost($postID, $userID){
-        // Only logged in users can vote
-        if(Entrust::hasRole(['owner', 'admin', 'user'])){
-            $post = Post::find($postID);
-            $post->downvotes =- 1;
-            $post->save();
+    // public function downvotePost(Request $request){
+    //     // Find user from id
+    //     $userID = $request->input('userID');
+    //     $user = User::find($userID);
 
-            return 0;
+    //     // Get post id from request
+    //     $postID = $request->input('postID');
+        
+    //     // Only logged in users can vote
+    //     if($user->hasRole(['owner', 'admin', 'user'])){
 
-        } else {
-            return -1;
-        }
-    }
+    //         $post = Post::find($postID);
+
+    //         // Look if user has voted in this post
+    //         // If user has already voted he cannot vote again
+    //         // except if he upvotes a post he has downvoted
+    //         $votes = DB::table('post_vote')->where([
+    //             ['post_id', '=', $post->id],
+    //             ['user_id', '=', $user->id]
+    //         ])->get();
+        
+    //         if($votes->isEmpty()){
+    //             // User has not voted on this post
+
+    //             // Increase vote
+    //             $post->downvotes++;
+
+    //             // Insert to table the user vote reference
+    //             DB::table('post_vote')->insert(
+    //                 ['post_id' => $post->id,
+    //                  'user_id' => $user->id,
+    //                  'vote_type' => 'downvote'] 
+    //             );
+                
+    //             // Save the modified post table data
+    //             $post->save();
+                
+    //             // Return success as ajax response
+    //             return 0;
+
+    //         // User has upvoted and now downvotes    
+    //         }else if($votes[0]->post_id == $post->id && $votes[0]->user_id == $user->id && $votes[0]->vote_type == 'upvote'){
+                                
+    //             // Find and replace post vote type from upvote to downvote
+    //             DB::table('post_vote')->where([
+    //                 ['post_id' => $post->id,
+    //                     'user_id' => $user->id,
+    //                     'vote_type' => 'upvote']
+    //             ])->update(['vote_type' => 'downvote']);
+
+    //             $post->upvotes--;
+    //             $post->downvotes++;   
+    //             $post->save();
+                
+    //             return 0;
+
+    //         } else {
+    //             return 'hasvoted';
+    //         }
+    //     } else {
+    //         return -1;
+    //     }
+    // }
 }
 
         

@@ -5,7 +5,7 @@
         @if(Entrust::hasRole(['owner', 'admin', 'user']))
             <input type="text" class="form-control" id="description" name="searchBoxPosts" placeholder="Description" value="">
         @endif
-        <br><br>
+        <br>
     </div>
     <div class="panel panel-info">
         <div class="panel-heading">Posts</div>
@@ -17,22 +17,24 @@
                         <div class="well">
                             <div class="row">
                                 <div class="col-md-1 col-sm-1">
+                                    {{--  Container has an id similar to post for updating the number of votes after ajax  --}}
                                     <div id="vote-container">
                                         <ul>
                                             <li>
-                                                <div id="upvote-icon" class="glyphicon glyphicon-arrow-up text-primary"></div>
+                                                <div class="glyphicon glyphicon-arrow-up text-primary" onclick="upvote({{$post->id}},{{Auth::user()->id}})"></div>
                                             </li>
                                             <li>
+                                                {{--  This is the number below the up arrow  --}}
                                                 @if($post->upvotes - $post->downvotes > 0)
-                                                    <b class="vote-counter text-primary">  {{$post->upvotes - $post->downvotes}}</b>
+                                                    <b id="post-votes-{{$post->id}}" class="vote-counter text-primary">  {{$post->upvotes - $post->downvotes}}</b>
                                                 @elseif($post->upvotes - $post->downvotes < 0)
-                                                    <b class="vote-counter text-danger">{{$post->upvotes - $post->downvotes}}</b>
+                                                    <b id="post-votes-{{$post->id}}" class="vote-counter text-danger">{{$post->upvotes - $post->downvotes}}</b>
                                                 @else
-                                                    <b class="vote-counter text-default">{{$post->upvotes - $post->downvotes}}</b>
+                                                    <b id="post-votes-{{$post->id}}" class="vote-counter text-default">{{$post->upvotes - $post->downvotes}}</b>
                                                 @endif
                                             </li>
                                             <li>
-                                                <div id="downvote-icon" class="glyphicon glyphicon-arrow-down text-danger"></div>
+                                                <div class="glyphicon glyphicon-arrow-down text-danger" onclick="downvote({{$post->id}},{{Auth::user()->id}})"></div>
                                             </li>
                                         </ul>
                                     </div>
@@ -57,8 +59,31 @@
                         @if($post->active)
                             <div class="well">
                                 <div class="row">
-                                    <div class="col-md-4 col-sm-4">
-                                        <img style="width:30%" src="/storage/cover_images/{{$post->cover_image}}">
+                                    <div class="col-md-1 col-sm-1">
+                                        {{--  Container has an id similar to post for updating the number of votes after ajax  --}}
+                                        <div id="vote-container">
+                                            <ul>
+                                                <li>
+                                                    <div class="glyphicon glyphicon-arrow-up text-primary" onclick="upvote({{$post->id}},{{Auth::user()->id}})"></div>
+                                                </li>
+                                                <li>
+                                                    {{--  This is the number below the up arrow  --}}
+                                                    @if($post->upvotes - $post->downvotes > 0)
+                                                        <b id="post-votes-{{$post->id}}" class="vote-counter text-primary">  {{$post->upvotes - $post->downvotes}}</b>
+                                                    @elseif($post->upvotes - $post->downvotes < 0)
+                                                        <b id="post-votes-{{$post->id}}" class="vote-counter text-danger">{{$post->upvotes - $post->downvotes}}</b>
+                                                    @else
+                                                        <b id="post-votes-{{$post->id}}" class="vote-counter text-default">{{$post->upvotes - $post->downvotes}}</b>
+                                                    @endif
+                                                </li>
+                                                <li>
+                                                    <div class="glyphicon glyphicon-arrow-down text-danger" onclick="downvote({{$post->id}},{{Auth::user()->id}})"></div>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 col-sm-3">
+                                        <img style="width:80%" src="/storage/cover_images/{{$post->cover_image}}">
                                     </div>
                                     <div class="col-md-8 col-sm-8">
                                         <h3><a href="/posts/{{$post->id}}">{{$post->title}}</a></h3>
