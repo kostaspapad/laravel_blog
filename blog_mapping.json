@@ -1,0 +1,114 @@
+{
+  "mappings": {
+    "message": {
+      "properties": {
+        "message_id": {
+          "type": "integer"
+        },
+        "message_body": {
+          "type": "string"
+        },
+        "message_notification_id": {
+          "type": "string"
+        },
+        "message_receiver": {
+          "properties": {
+            "message_email_receiver": {
+              "type": "string"
+            },
+            "message_user_receiver_id": {
+              "type": "integer"
+            },
+            "message_username_receiver": {
+              "type": "string"
+            }
+          },
+          "type": "nested"
+        },
+        "message_sender": {
+          "properties": {
+            "message_email_sender": {
+              "type": "string"
+            },
+            "message_user_sender_id": {
+              "type": "integer"
+            },
+            "message_username_sender": {
+              "type": "string"
+            }
+          },
+          "type": "nested"
+        },
+        "message_datetime": {
+          "properties": {
+            "created_at": {
+              "type" : "date",
+              "format" : "yyyy-MM-dd HH:mm:ss"
+            },
+            "updated_at": {
+              "type" : "date",
+              "format" : "yyyy-MM-dd HH:mm:ss"
+            }
+          },
+          "type": "nested"
+        },
+        "message_title": {
+          "type": "string"
+        }
+      }
+    },
+    "post": {
+      "properties": {
+        "post_id":{
+          "type": "integer"
+        },
+        "post_active": {
+          "type": "boolean"
+        },
+        "post_body": {
+          "type": "string"
+        },
+        "post_category": {
+          "type": "string"
+        },
+        "post_notification_id": {
+          "type": "integer"
+        },
+        "post_datetime": {
+          "properties": {
+            "created_at": {
+              "type" : "date",
+              "format" : "yyyy-MM-dd HH:mm:ss"
+            },
+            "updated_at": {
+              "type" : "date",
+              "format" : "yyyy-MM-dd HH:mm:ss"
+            }
+          },
+          "type": "nested"
+        },
+        "post_title": {
+          "type": "string"
+        },
+        "post_user_id": {
+          "type": "integer"
+        },
+        "post_votes": {
+          "properties": {
+            "downvotes": {
+              "type": "integer"
+            },
+            "upvotes": {
+              "type": "integer"
+            }
+          },
+          "type": "nested"
+        }
+      }
+    }
+  },
+  "settings": {
+    "number_of_replicas": 0,
+    "number_of_shards": 1
+  }
+}

@@ -1,5 +1,6 @@
 $(document).ready(function () {
 
+    
     $("input[name=searchBoxPosts]").keypress(function (e) {
 
         // Save search container initial state. 
@@ -129,89 +130,20 @@ $(document).ready(function () {
         }
     });
 
-    
-    // $("#upvote-icon").click(function(){
-    // alert("Hi " + user.user_id);
-        // // Use this else 419 error status code
-        // $.ajaxSetup({
-        //     headers: {
-        //         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        //     }
-        // });
-
-        // e.preventDefault();
-
-        // // Execute ajax request
-        // $.ajax({
-        //     type: 'POST',
-        //     url: 'upvotePost',
-        //     data: formData,
-        //     dataType: 'json',
-
-        //     // If request is successfull
-        //     success: function (data) {
-
-        //         // Check if controller returned no data
-        //         if (data != -1) {
-                    
-        //             // Increase vote
-        //             $(".vote-counter").html(parseInt($('.changeNumber').html(), 10)+1)
-
-        //         }
-        //     },
-
-        //     // If request was not successfull
-        //     error: function (data) {
-        //         console.log(data);
-        //     }
-        // });
-    // });
-
-    $("#downvote-icon").click(function(){
-        // Use this else 419 error status code
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-
-        e.preventDefault();
-
-        // Execute ajax request
-        $.ajax({
-            type: 'POST',
-            url: 'downvotePost',
-            data: formData,
-            dataType: 'json',
-
-            // If request is successfull
-            success: function (data) {
-
-                // Check if controller returned no data
-                if (data != -1) {
-
-                    // Reduce vote
-                    $("#vote-container").html(parseInt($('.changeNumber').html(), 10)-1)
-
-                }
-            },
-
-            // If request was not successfull
-            error: function (data) {
-                console.log(data);
-            }
-        });
-    });
-
 
 });
-
-function upvote(postID, userID){
-
+/*
+ * postID: ID of post
+ * userID: ID of user
+ * task: Upvote or Downvote
+ */
+function upvote(postID, userID, task){
+    console.log('task: ' + task);
 
     var formData = {
         postID: postID,
-        userID: userID
+        userID: userID,
+        task: 'upvote'
     }
 
     $.ajaxSetup({
@@ -224,16 +156,24 @@ function upvote(postID, userID){
     // Execute ajax request
     $.ajax({
         type: 'POST',
-        url: 'upvote',
+        url: 'votes',
         data: formData,
         dataType: 'json',
         
         // If request is successfull
         success: function (data) {
             // Check if controller returned no data
-            if (data == 0) {
+            if (data == 'hasupvoted'){
+                console.log('hasupvoted')
+            } else if (data == 'hasdownvoted'){
+                console.log('hasdownvoted')
+            } else if (data == 'error'){
+                console.log('error');
+            } else {
+                console.log('Success');
+                console.log(data);
                 // Increment number of votes
-                $("#post-votes-" + postID).html(function(i, val) { return val*1+1 });
+                $("#post-votes-" + postID).html(data);
                 
                 // Get number of votes for post
                 var counter = parseInt($("#post-votes-" + postID).text(), 10);
@@ -250,11 +190,18 @@ function upvote(postID, userID){
     });
 }
 
+/*
+ * postID: ID of post
+ * userID: ID of user
+ * task: Upvote or Downvote
+ */
 function downvote(postID, userID){
-
+    
+    
     var formData = {
         postID: postID,
-        userID: userID
+        userID: userID,
+        task: 'downvote'
     }
 
     $.ajaxSetup({
@@ -266,18 +213,24 @@ function downvote(postID, userID){
     // Execute ajax request
     $.ajax({
         type: 'POST',
-        url: 'downvote',
+        url: 'votes',
         data: formData,
         dataType: 'json',
-
+        
         // If request is successfull
         success: function (data) {
-
             // Check if controller returned no data
-            if (data != -1) {
-
-                // Decrease number of votes
-                $("#post-votes-" + postID).html(function(i, val) { return val*1-1 });
+            if (data == 'hasupvoted'){
+                console.log('hasupvoted')
+            } else if (data == 'hasdownvoted'){
+                console.log('hasdownvoted')
+            } else if (data == 'error'){
+                console.log('error');
+            } else {
+                console.log('Success');
+                console.log(data);
+                // Increment number of votes
+                $("#post-votes-" + postID).html(data);
                 
                 // Get number of votes for post
                 var counter = parseInt($("#post-votes-" + postID).text(), 10);

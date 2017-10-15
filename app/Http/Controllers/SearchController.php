@@ -19,8 +19,8 @@ class SearchController extends Controller
         /*
         * Blocks guests from using the controllers views, except the index and show view
         */
-        $this->middleware('auth', ['except' => ['index', 'show']]);
-
+        $this->middleware('auth');
+        //$this->middleware('auth', ['except' => ['index', 'show']]);
         // /*
         // * Adds create permission middleware to the routes create and store only. 
         // * If the user tries to access either create or store routes, the middleware
@@ -61,18 +61,10 @@ class SearchController extends Controller
                 ]
             ]
         ];
-        // {
-        //     "query": {
-        //         "query_string": {
-        //             "query": "Asd*",
-        //             "fields": ["post_title", "post_body", "post_category"]
-        //         }
-        //     }
-        // }
         
         $client = ClientBuilder::create()->build();
         $response = $client->search($params);
-        
+
         // If client return data return data else return 0
         if($response['hits']['total'] !== 0){
 
@@ -85,10 +77,10 @@ class SearchController extends Controller
             
             // Loop for every hit and insert _source data to $posts
             while ($i < $hits) {
-                $posts[$i] = Post::find($response['hits']['hits'][$i]['_source']['post_id']);
+                $posts[$i] = Post::find($response['hits']['hits'][$i]['_id']);
                 $i++;
             }
-            // dd($posts);
+            
             // Render and return view as response to ajax
             return view('layouts.partials.search.blog_post_response')->with('posts', $posts);
 
@@ -108,7 +100,7 @@ class SearchController extends Controller
                 'query' => [
                     'query_string' => [
                         'query' => '*'.$searchTerm .'*',
-                        "fields"=> ["title", "body"]
+                        "fields"=> ["message_title", "message_body"]
                     ]
                 ]
             ]
@@ -116,6 +108,8 @@ class SearchController extends Controller
         
         $client = ClientBuilder::create()->build();
         $response = $client->search($params);
+        
+        // dd($response);
         
         // If client return data return data else return 0
         if($response['hits']['total'] !== 0){
@@ -132,7 +126,7 @@ class SearchController extends Controller
                 $result[$i] = $response['hits']['hits'][$i]['_source'];
                 $i++;
             }
-            
+            // dd($result);
             // Render and return view as response to ajax
             return view('layouts.partials.search.message_response')->with('result', $result);
 

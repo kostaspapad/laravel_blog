@@ -8,20 +8,21 @@
                     <div id="vote-container">
                         <ul>
                             <li>
-                                <span class="glyphicon glyphicon-arrow-up text-primary upvote-arrow" onclick="upvote({{$post->id}},{{Auth::user()->id}})" style="cursor:pointer"></span>
+                                <div class="glyphicon glyphicon-arrow-up text-primary" style="color:#4c96ea" onclick="upvote({{$post->id}},{{Auth::user()->id}})"></div>
                             </li>
                             <li>
                                 {{--  This is the number below the up arrow  --}}
-                                @if($post->upvotes - $post->downvotes > 0)
-                                    <b id="post-votes-{{$post->id}}" class="vote-counter text-primary">  {{$post->upvotes - $post->downvotes}}</b>
-                                @elseif($post->upvotes - $post->downvotes < 0)
-                                    <b id="post-votes-{{$post->id}}" class="vote-counter text-danger">{{$post->upvotes - $post->downvotes}}</b>
+                                {{--  $post->countUpVoters() - $post->countDownVoters(); Calculates the votes end returns total  --}}
+                                @if($post->countUpVoters() - $post->countDownVoters() > 0)
+                                    <b id="post-votes-{{$post->id}}" class="vote-counter text-primary">  {{$post->countUpVoters() - $post->countDownVoters()}}</b>
+                                @elseif($post->countUpVoters() - $post->countDownVoters() < 0)
+                                    <b id="post-votes-{{$post->id}}" class="vote-counter text-danger">{{$post->countUpVoters() - $post->countDownVoters()}}</b>
                                 @else
-                                    <b id="post-votes-{{$post->id}}" class="vote-counter text-default">{{$post->upvotes - $post->downvotes}}</b>
+                                    <b id="post-votes-{{$post->id}}" class="vote-counter text-default">{{$post->countUpVoters() - $post->countDownVoters()}}</b>
                                 @endif
                             </li>
                             <li>
-                                <span class="glyphicon glyphicon-arrow-down text-danger downvote-arrow" onclick="downvote({{$post->id}},{{Auth::user()->id}})" style="cursor:pointer"></span>
+                                <div class="glyphicon glyphicon-arrow-down" style="color:#ea4c4c" onclick="downvote({{$post->id}},{{Auth::user()->id}})"></div>
                             </li>
                         </ul>
                     </div>
@@ -51,16 +52,17 @@
                         <div id="vote-container">
                             <ul>
                                 <li>
-                                    <div class="glyphicon glyphicon-arrow-up text-primary" onclick="upvote({{$post->id}},{{Auth::user()->id}})"></div>
+                                    <div class="glyphicon glyphicon-arrow-up" onclick="upvote({{$post->id}},{{Auth::user()->id}})"></div>
                                 </li>
                                 <li>
                                     {{--  This is the number below the up arrow  --}}
-                                    @if($post->upvotes - $post->downvotes > 0)
-                                        <b id="post-votes-{{$post->id}}" class="vote-counter text-primary">  {{$post->upvotes - $post->downvotes}}</b>
-                                    @elseif($post->upvotes - $post->downvotes < 0)
-                                        <b id="post-votes-{{$post->id}}" class="vote-counter text-danger">{{$post->upvotes - $post->downvotes}}</b>
+                                    {{--  $post->countUpVoters() - $post->countDownVoters(); Calculates the votes end returns total  --}}
+                                    @if($post->countUpVoters() - $post->countDownVoters() > 0)
+                                        <b id="post-votes-{{$post->id}}" class="vote-counter text-primary">  {{$post->countUpVoters() - $post->countDownVoters()}}</b>
+                                    @elseif($post->countUpVoters() - $post->countDownVoters() < 0)
+                                        <b id="post-votes-{{$post->id}}" class="vote-counter text-danger">{{$post->countUpVoters() - $post->countDownVoters()}}</b>
                                     @else
-                                        <b id="post-votes-{{$post->id}}" class="vote-counter text-default">{{$post->upvotes - $post->downvotes}}</b>
+                                        <b id="post-votes-{{$post->id}}" class="vote-counter text-default">{{$post->countUpVoters() - $post->countDownVoters()}}</b>
                                     @endif
                                 </li>
                                 <li>

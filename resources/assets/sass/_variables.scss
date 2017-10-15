@@ -42,7 +42,9 @@ $panel-default-heading-bg: #fff;
 	box-shadow: 0 1px 0 rgba(12,13,14,0.1),0 1px 3px rgba(12,13,14,0.1),0 4px 20px rgba(12,13,14,0.035),0 1px 1px rgba(12,13,14,0.025);
 }
 
-div.upvote-arrow { cursor: pointer; }
-div.downvote-arrow { cursor: pointer; }
-
+// dont shop bullets to ul of arrows
+ul
+{
+    list-style-type: none;
+}
 

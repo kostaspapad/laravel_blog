@@ -77,20 +77,27 @@ class MessagesController extends Controller
         $elasticsearchData = [
             'body' => [
                 'message_id' => $message->id,
-                'user_sender_id' => $senderID,
-                'user_receiver_id' => $receiverID,
-                'notification_id' => $lastNotificationId,
-                'username_sender' => User::find($senderID)->name,
-                'username_receiver' => User::find($receiverID)->name,
-                'email_sender' => User::find($senderID)->email,
-                'email_receiver' => User::find($receiverID)->email,
-                'title' => $message->title,
-                'body' => $message->body,
-                //'state' => [ 'created_at' => $]
+                'message_body' => $message->body,
+                'message_notification_id' => $lastNotificationId,
+                'message_receiver' => [
+                    'message_email_receiver' => User::find($receiverID)->email,
+                    'message_user_receiver_id' => $receiverID,
+                    'message_username_receiver' => User::find($receiverID)->name
+                ],
+                'message_sender' => [
+                    'message_email_sender' => User::find($senderID)->email,
+                    'message_user_sender_id' => $senderID,
+                    'message_username_sender' => User::find($senderID)->name
+                ],
+                'message_datetime' => [
+                    'created_at' => $message->created_at->format('Y-m-d H:i:s'),
+                    'updated_at' => $message->updated_at->format('Y-m-d H:i:s'),
+                ],
+                'message_title' => $message->title,
             ],
             'index' => 'blog',
             'type' => 'message',
-            // 'id' => $message->user_sender_id,
+            'id' => $message->id
         ];
         
         //dd($elasticsearchData);

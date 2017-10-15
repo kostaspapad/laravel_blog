@@ -172,6 +172,7 @@ return [
         Unisharp\Ckeditor\ServiceProvider::class,
         Zizaco\Entrust\EntrustServiceProvider::class,
         Laracasts\Utilities\JavaScript\JavaScriptServiceProvider,
+        cc\LaravelVote\VoteServiceProvider::class,
         /*
          * Application Service Providers...
          */

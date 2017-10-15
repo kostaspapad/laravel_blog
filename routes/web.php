@@ -28,8 +28,8 @@ Route::get('/usernotifications/{id}', 'NotificationsController@index');
 Route::post('searchmessages', 'SearchController@searchMessages');
 Route::post('searchposts', 'SearchController@searchPosts');
 
-Route::post('upvote', 'PostsController@upvotePost');
-Route::post('downvote', 'PostsController@downvotePost');
+Route::resource('votes', 'VotesController');
+
 
 Route::get('/dashboard', 'DashboardController@index');
 Route::get('/notifications/{id}','NotificationController@delete');
