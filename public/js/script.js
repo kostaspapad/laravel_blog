@@ -14,53 +14,43 @@ $(document).ready(function () {
                 searchTerm: $("input[name=searchBoxPosts]").val(),
             }
 
-            // User did not type anything
-            if (formData['searchTerm'] !== ""){
-            
-                // Remove old results
-                $("#searchContainer").empty();
+            // Remove old results
+            $("#searchContainer").empty();
 
-                // Use this else the server responds with error status code 419
-                $.ajaxSetup({
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            // Use this else the server responds with error status code 419
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+
+            e.preventDefault();
+
+            // Execute ajax request
+            $.ajax({
+                type: 'POST',
+                url: 'searchposts',
+                data: formData,
+                dataType: 'html',
+
+                // If request is successfull
+                success: function (data) {
+
+                    // Check if controller returned no data
+                    if (data != 0) {
+                        // Insert rendered data to div component
+                        $("#searchContainer").html(data);
+
+                    } else {
+                        $("#searchContainer").append("No results");
                     }
-                });
+                },
 
-                e.preventDefault();
-
-                // Execute ajax request
-                $.ajax({
-                    type: 'POST',
-                    url: 'searchposts',
-                    data: formData,
-                    dataType: 'html',
-
-                    // If request is successfull
-                    success: function (data) {
-
-                        // Check if controller returned no data
-                        if (data != 0) {
-                            // Insert rendered data to div component
-                            $("#searchContainer").html(data);
-
-                        } else {
-                            $("#searchContainer").append("No results");
-                        }
-                    },
-
-                    // If request was not successfull
-                    error: function (data) {
-                        console.log(data);
-                    }
-                });
-
-            } else { //formData is empty("")
-
-                // Use saved html to reverse to initial state of view
-                $('#searchContainer').html(searchContainerHtml);
-                
-            }
+                // If request was not successfull
+                error: function (data) {
+                    console.log(data);
+                }
+            });
         } // User pressed enter
     });
 
@@ -129,9 +119,8 @@ $(document).ready(function () {
             }
         }
     });
-
-
 });
+
 /*
  * postID: ID of post
  * userID: ID of user

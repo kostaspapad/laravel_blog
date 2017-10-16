@@ -258,8 +258,6 @@ class PostsController extends Controller
         // Create post
         $post->title = $request->input('title');
         $post->body = $request->input('body');
-        $post->upvotes = 0;
-        $post->downvotes = 0;
 
         
         if($request->hasFile('cover_image')){
@@ -269,11 +267,33 @@ class PostsController extends Controller
         // Save
         $post->save();
 
-        // Notify all users for the new post
-        $allUsers = User::all();
-        foreach ($allUsers as $user) {
-            $user->notify(new NewPost($post));
-        }
+        // Prepare data for elasticsearch
+        $data = [
+            'body' => [
+                'post_title' => $post->title,
+                'post_datetime' => [
+                    'created_at' => $post->created_at->format('Y-m-d H:i:s'),
+                    'updated_at' => $post->updated_at->format('Y-m-d H:i:s')
+                ],
+                // Not used because has many recipients
+                //'post_notification_id' => $post->
+                'post_category' => $post->category,
+                'post_body' => $post->body,
+                'post_user_id' => $post->user_id,
+                'post_votes' => [
+                    'upvotes' => $post->countUpVoters(),
+                    'downvotes' => $post->countDownVoters()
+                ],
+                'post_active' => $post->active,
+            ],
+            'index' => 'blog',
+            'type' => 'post',
+            'id' => $post->id,
+        ];
+                
+        // Insert post data to elasticsearch
+        $client = ClientBuilder::create()->build();
+        $return = $client->index($data);
         
         // Redirect
         return redirect('/posts')->with('success', 'Post updated');
@@ -300,6 +320,18 @@ class PostsController extends Controller
         }
         
         $post->delete();
+
+        // Prepare DELETE query for elasticsearch
+        $params = [
+            'index' => 'blog',
+            'type' => 'post',
+            'id' => $post->id
+        ];
+        
+        // Run DELETE query
+        $client = ClientBuilder::create()->build();
+        $response = $client->delete($params);
+
         return redirect('/posts')->with('success', 'Post Removed');
     }
 
@@ -316,7 +348,23 @@ class PostsController extends Controller
         // Reverse it true/false
         $post->active = !$post->active;
 
-        $post->save();
+        // If save successfull update elastic doc
+        if($post->save()){
+            $client = ClientBuilder::create()->build();
+            
+            $params = array();
+            $params['index'] = 'blog';
+            $params['type'] = 'post';
+            $params['id'] = $post->id;
+            $result = $client->get($params);
+            
+            
+            $result['_source']['post_active'] = $post->active;
+            $params['body']['doc'] = $result['_source'];
+    
+            // Update post vote data to elasticsearch
+            $result = $client->update($params);
+        }
 
         if($post->active){
             return redirect('/posts')->with('success', 'Post activated');

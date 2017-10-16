@@ -6,7 +6,7 @@
     {{--  Only the administrator can view this search box  --}}
     @if(Entrust::hasRole('admin'))
         <div class="row">
-            <input type="text" class="form-control" id="description" name="searchBoxMessages" placeholder="Description" value="">
+            <input type="text" class="form-control" id="description" name="searchBoxMessages" placeholder="Search" value="">
             <br><br>
         </div>
         <div id="searchContainer" class="panel panel-default" style="display:none;">

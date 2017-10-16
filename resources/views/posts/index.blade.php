@@ -3,7 +3,7 @@
 @section('content')
     <div class="row">
         @if(Entrust::hasRole(['owner', 'admin', 'user']))
-            <input type="text" class="form-control" id="description" name="searchBoxPosts" placeholder="Description" value="">
+            <input type="text" class="form-control" id="description" name="searchBoxPosts" placeholder="Search" value="">
         @endif
         <br>
     </div>

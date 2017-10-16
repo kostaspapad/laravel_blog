@@ -18,7 +18,6 @@ Route::get('/about', 'PagesController@about');
 
 Route::get('/toggle/{id}', 'PostsController@togglePostVisibility');
 Route::resource('/posts', 'PostsController');
-//Route::get('toggle/{id}',         ['as' => 'toggle',   'uses' => 'PostsController@togglePostVisibility']);
 
 Route::resource('/users', 'UsersController');
 Route::resource('/userprofile', 'UserProfileController');

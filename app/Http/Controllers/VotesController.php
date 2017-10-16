@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\User;
 use App\Post;
-
+use Elasticsearch\ClientBuilder;
+use DebugBar\StandardDebugBar;
 class VotesController extends Controller
 {
     /**
@@ -48,10 +49,10 @@ class VotesController extends Controller
         // Get user
         $userID = $request->input('userID');
         $user = User::find($userID);
-
+        
         // Check if user has a role else return 'not_authorized'
         if($user->hasRole(['owner', 'admin', 'user'])){
-            
+
             // Get post id from request
             $postID = $request->input('postID');
             $post = Post::find($postID);
@@ -66,6 +67,7 @@ class VotesController extends Controller
                 return 'hasupvoted';
             } else if($user->hasUpVoted($post) == true && $task == 'downvote'){
                 $user->cancelVote($post);
+                $this->updateVotesToIndex($post);
                 return $this->calculateVotes($post);
             }
 
@@ -76,6 +78,7 @@ class VotesController extends Controller
                 return 'hasdownvoted';
             } else if($user->hasDownVoted($post) == true && $task == 'upvote'){
                 $user->cancelVote($post);
+                $this->updateVotesToIndex($post);
                 return $this->calculateVotes($post);
             }
             
@@ -84,14 +87,17 @@ class VotesController extends Controller
             // Else return -1 (error)
             if(!$user->hasUpVoted($post) && !$user->hasDownVoted($post) && $task == 'upvote'){
                 $user->upVote($post);
+                $this->updateVotesToIndex($post);
                 return $this->calculateVotes($post);            
             } else if(!$user->hasUpVoted($post) && !$user->hasDownVoted($post) && $task == 'downvote'){
                 $user->downVote($post);
+                $this->updateVotesToIndex($post);
                 return $this->calculateVotes($post);
             } else {
                 return 'error';
             }
-
+        
+        // $return = $client->index($data);
         } else {
             return 'not_authorized';
         }
@@ -107,5 +113,31 @@ class VotesController extends Controller
     public function calculateVotes($post){
         $total = $post->countUpVoters() - $post->countDownVoters();
         return $total;
+    }
+
+    /*
+     * Update elastic doc with new post vote data
+     * 
+     * @param App\Post
+     * 
+     */
+    public function updateVotesToIndex($post){
+
+        $client = ClientBuilder::create()->build();
+
+        $params = array();
+        $params['index'] = 'blog';
+        $params['type'] = 'post';
+        $params['id'] = $post->id;
+        $result = $client->get($params);
+        
+        
+        $result['_source']['post_votes']['upvotes'] = $post->countUpVoters(); //update existing field with new value
+        $result['_source']['post_votes']['downvotes'] = $post->countDownVoters();
+        $params['body']['doc'] = $result['_source'];
+
+        // Update post vote data to elasticsearch
+        Debugbar::info($result);
+        $result = $client->update($params);
     }
 }

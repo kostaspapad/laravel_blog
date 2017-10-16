@@ -238,6 +238,7 @@ return [
         'Html' => Collective\Html\HtmlFacade::class,
         'Sanitizer' => Waavi\Sanitizer\Laravel\Facade::class,
         'Entrust'   => Zizaco\Entrust\EntrustFacade::class,
+        
     ],
 
 ];

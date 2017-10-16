@@ -6,7 +6,6 @@ use App\Post;
 use Illuminate\Http\Request;
 use Elasticsearch\ClientBuilder;
     
-
 class SearchController extends Controller
 {
     /**
@@ -49,43 +48,49 @@ class SearchController extends Controller
         // Get user input
         $searchTerm = $request->input('searchTerm');
         
-        $params = [
-            'index' => 'blog',
-            'type' => 'post',
-            'body' => [
-                'query' => [
-                    'query_string' => [
-                        'query' => '*'.$searchTerm .'*',
-                        "fields"=> ["post_title", "post_body", "post_category"]
+        if($searchTerm != ""){
+            $params = [
+                'index' => 'blog',
+                'type' => 'post',
+                'body' => [
+                    'query' => [
+                        'query_string' => [
+                            'query' => '*'.$searchTerm .'*',
+                            "fields"=> ["post_title", "post_body", "post_category"]
+                        ]
                     ]
                 ]
-            ]
-        ];
-        
-        $client = ClientBuilder::create()->build();
-        $response = $client->search($params);
-
-        // If client return data return data else return 0
-        if($response['hits']['total'] !== 0){
-
-            // Get hits
-            $hits = count($response['hits']['hits']);
-
-            // Init i, result
-            $result = null;
-            $i = 0;
+            ];
             
-            // Loop for every hit and insert _source data to $posts
-            while ($i < $hits) {
-                $posts[$i] = Post::find($response['hits']['hits'][$i]['_id']);
-                $i++;
+            $client = ClientBuilder::create()->build();
+            $response = $client->search($params);
+            
+            // If client return data return data else return 0
+            if($response['hits']['total'] !== 0){
+
+                // Get hits
+                $hits = count($response['hits']['hits']);
+
+                // Init i, result
+                $result = null;
+                $i = 0;
+                
+                // Loop for every hit and insert _source data to $posts
+                while ($i < $hits) {
+                    $posts[$i] = Post::find($response['hits']['hits'][$i]['_id']);
+                    $i++;
+                }
+                
+                // Render and return view as response to ajax
+                return view('layouts.partials.search.blog_post_response')->with('posts', $posts);
+
+            } else {
+                return 0;
             }
-            
-            // Render and return view as response to ajax
-            return view('layouts.partials.search.blog_post_response')->with('posts', $posts);
-
+        // User send empty search request, return all posts
         } else {
-            return 0;
+            $posts = Post::all();
+            return view('layouts.partials.search.blog_post_response')->with('posts', $posts);
         }
     }
 

@@ -44,7 +44,7 @@
         </div>
     @else
         {{--  For user show only active posts  --}}
-        @if($post['post_active'])
+        @if($post['active'])
             <div class="well">
                 <div class="row">
                     <div class="col-md-1 col-sm-1">
