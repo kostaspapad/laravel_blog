@@ -1,14 +1,62 @@
 {
+  "settings": {
+    "analysis": {
+      "filter": {
+        "autocomplete": {
+          "max_gram": 10,
+          "min_gram": 1,
+          "type": "edge_ngram"
+        }
+      },
+      "analyzer": {
+        "post_title": {
+          "stopwords": [],
+          "type": "standard"
+        },
+        "post_title_autocomplete": {
+          "filter": [
+            "lowercase",
+            "autocomplete"
+          ],
+          "tokenizer": "standard",
+          "type": "custom"
+        }
+      }
+    },
+    "number_of_replicas": 0,
+    "number_of_shards": 1
+  },
   "mappings": {
     "message": {
       "properties": {
-        "message_id": {
-          "type": "integer"
-        },
         "message_body": {
           "type": "string"
         },
+        "message_datetime": {
+          "properties": {
+            "created_at": {
+              "format": "yyyy-MM-dd HH:mm:ss",
+              "include_in_all": false,
+              "index": "not_analyzed",
+              "type": "date"
+            },
+            "updated_at": {
+              "format": "yyyy-MM-dd HH:mm:ss",
+              "include_in_all": false,
+              "index": "not_analyzed",
+              "type": "date"
+            }
+          },
+          "type": "nested"
+        },
+        "message_id": {
+          "include_in_all": false,
+          "index": "not_analyzed",
+          "type": "integer"
+        },
         "message_notification_id": {
+          "include_in_all": false,
+          "index": "not_analyzed",
           "type": "string"
         },
         "message_receiver": {
@@ -17,6 +65,8 @@
               "type": "string"
             },
             "message_user_receiver_id": {
+              "include_in_all": false,
+              "index": "not_analyzed",
               "type": "integer"
             },
             "message_username_receiver": {
@@ -31,23 +81,12 @@
               "type": "string"
             },
             "message_user_sender_id": {
+              "include_in_all": false,
+              "index": "not_analyzed",
               "type": "integer"
             },
             "message_username_sender": {
               "type": "string"
-            }
-          },
-          "type": "nested"
-        },
-        "message_datetime": {
-          "properties": {
-            "created_at": {
-              "type" : "date",
-              "format" : "yyyy-MM-dd HH:mm:ss"
-            },
-            "updated_at": {
-              "type" : "date",
-              "format" : "yyyy-MM-dd HH:mm:ss"
             }
           },
           "type": "nested"
@@ -59,9 +98,6 @@
     },
     "post": {
       "properties": {
-        "post_id":{
-          "type": "integer"
-        },
         "post_active": {
           "type": "boolean"
         },
@@ -71,34 +107,62 @@
         "post_category": {
           "type": "string"
         },
-        "post_notification_id": {
-          "type": "integer"
-        },
         "post_datetime": {
           "properties": {
             "created_at": {
-              "type" : "date",
-              "format" : "yyyy-MM-dd HH:mm:ss"
+              "format": "yyyy-MM-dd HH:mm:ss",
+              "include_in_all": false,
+              "index": "not_analyzed",
+              "type": "date"
             },
             "updated_at": {
-              "type" : "date",
-              "format" : "yyyy-MM-dd HH:mm:ss"
+              "format": "yyyy-MM-dd HH:mm:ss",
+              "include_in_all": false,
+              "index": "not_analyzed",
+              "type": "date"
             }
           },
           "type": "nested"
         },
+        "post_id": {
+          "include_in_all": false,
+          "index": "not_analyzed",
+          "type": "integer"
+        },
+        "post_notification_id": {
+          "include_in_all": false,
+          "index": "not_analyzed",
+          "type": "integer"
+        },
         "post_title": {
-          "type": "string"
+          "fields": {
+            "post_title": {
+              "analyzer": "post_title",
+              "type": "string"
+            },
+            "autocomplete": {
+              "analyzer": "post_title_autocomplete",
+              "search_analyzer": "post_title",
+              "type": "string"
+            }
+          },
+          "type": "multi_field"
         },
         "post_user_id": {
+          "include_in_all": false,
+          "index": "not_analyzed",
           "type": "integer"
         },
         "post_votes": {
           "properties": {
             "downvotes": {
+              "include_in_all": false,
+              "index": "not_analyzed",
               "type": "integer"
             },
             "upvotes": {
+              "include_in_all": false,
+              "index": "not_analyzed",
               "type": "integer"
             }
           },
@@ -106,9 +170,5 @@
         }
       }
     }
-  },
-  "settings": {
-    "number_of_replicas": 0,
-    "number_of_shards": 1
   }
 }
