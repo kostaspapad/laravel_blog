@@ -1,4 +1,32 @@
 $(document).ready(function () {
+    
+    /* 
+     * Run autocomplete
+     */
+      $("input[name=searchBoxPosts]").autocomplete({
+        source: function(request, response) {
+          $.ajax({
+            url: "autocomplete",
+            dataType: "json",
+            data: {
+              q: request.term
+            },
+            success: function(data) {
+              response(data);
+            }
+          });
+        },
+        minLength: 1,
+        select: function(event, ui) {
+          showSuggestions(ui.item ? ui.item.label :this.value);
+        },
+        open: function() {
+          $(this).removeClass("ui-corner-all").addClass("ui-corner-top");
+        },
+        close: function() {
+          $(this).removeClass("ui-corner-top").addClass("ui-corner-all");
+        }
+      });
 
     
     $("input[name=searchBoxPosts]").keypress(function (e) {
@@ -120,6 +148,11 @@ $(document).ready(function () {
         }
     });
 });
+
+function showSuggestions(message) {
+    $("<div>").text(message).prependTo(".searchBoxPosts");
+    $(".searchBoxPosts").scrollTop(0);
+}
 
 /*
  * postID: ID of post

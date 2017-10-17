@@ -4,6 +4,16 @@
     <div class="row">
         @if(Entrust::hasRole(['owner', 'admin', 'user']))
             <input type="text" class="form-control" id="description" name="searchBoxPosts" placeholder="Search" value="">
+            
+            {{--  <div class="ui-widget">
+                <label for="city">Your city: </label>
+                <input id="city">
+            </div>
+
+            <div class="ui-widget" style="margin-top:2em; font-family:Arial">
+            Result:
+            <div id="log" style="height: 200px; width: 300px; overflow: auto;" class="ui-widget-content"></div>
+            </div>  --}}
         @endif
         <br>
     </div>
@@ -109,7 +119,7 @@
             @else
                 <p>No posts found</p>
                 <br>
-                <a href="/posts" class="btn btn-default pull-right">Go Back</a>
+                <a href="/" class="btn btn-default pull-right">Go Back</a>
             @endif
         </div> {{-- panel-body  --}}
     </div> {{-- panel panel-info  --}}

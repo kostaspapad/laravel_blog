@@ -25,6 +25,7 @@ class UserRolesPermissionsTableSeeder extends Seeder
         $user2 = User::where('name','=','kostas2')->first();
         $user3 = User::where('name','=','kostas3')->first();
         $user4 = User::where('name','=','kostas4')->first();
+        
         //dd($user1);
 
         // Create role objects
@@ -44,17 +45,21 @@ class UserRolesPermissionsTableSeeder extends Seeder
         $user2->attachRole($roleAdmin);
         $user3->attachRole($roleUser);
         $user4->attachRole($roleUser);
+        
 
+        // Init permissions
         $permCreate = new App\Permission;
         $permEdit = new App\Permission;
         $permUpdate = new App\Permission;
         $permDelete = new App\Permission;
 
+        // Attach 
         $permCreate = Permission::where('name', '=', 'create')->first();
         $permEdit = Permission::where('name', '=', 'edit')->first();
         $permUpdate = Permission::where('name', '=', 'update')->first();
         $permDelete = Permission::where('name', '=', 'delete')->first();
         
+        // Set permissions
         $roleOwner->perms()->sync(array($permCreate->id, $permDelete->id));
         $roleAdmin->perms()->sync(array($permCreate->id, $permEdit->id, $permUpdate->id, $permDelete->id));
         $roleUser->perms()->sync(array($permCreate->id, $permEdit->id, $permDelete->id));

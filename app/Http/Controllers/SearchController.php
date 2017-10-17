@@ -75,7 +75,7 @@ class SearchController extends Controller
                 $result = null;
                 $i = 0;
                 
-                // Loop for every hit and insert _source data to $posts
+                // Loop for every hit and insert _id data to $posts
                 while ($i < $hits) {
                     $posts[$i] = Post::find($response['hits']['hits'][$i]['_id']);
                     $i++;
@@ -91,6 +91,62 @@ class SearchController extends Controller
         } else {
             $posts = Post::all();
             return view('layouts.partials.search.blog_post_response')->with('posts', $posts);
+        }
+    }
+
+    public function autoComplete(Request $request){
+        //dd($request);
+
+       // Get user input
+       $searchTerm = $request->input('q');
+       
+       // Use bool query to match, also the should match keyword is increasing
+       // the score of the match if is successfull
+       $params = [
+           'index' => 'blog',
+           'type' => 'post',
+           'body' => [
+               'query' => [
+                   'bool' => [
+                       'must' => [
+                            'match' => [
+                                'post_title.autocomplete' => $searchTerm
+                            ]
+                       ],
+                       'should' => [
+                            'match' => [
+                                'post_title' => $searchTerm
+                            ]
+                       ]
+                   ]
+                ],
+                '_source' => [
+                    'post_title'
+                ]
+            ]
+        ];
+       
+        $client = ClientBuilder::create()->build();
+        $response = $client->search($params);
+        // If client return data return data else return 0
+        if($response['hits']['total'] !== 0){
+
+            // Get hits
+            $hits = count($response['hits']['hits']);
+
+            // Init i, result
+            $result = null;
+            $i = 0;
+        
+            // Loop for every hit and insert _source data to $autocomplete_response
+            while ($i < $hits) {
+                $autocomplete_response[$i] = $response['hits']['hits'][$i]['_source']['post_title'];
+                $i++;
+            }
+            // dd($autocomplete_response);
+            return $autocomplete_response;
+        } else {
+            return 0;
         }
     }
 
@@ -140,3 +196,28 @@ class SearchController extends Controller
         }
     }
 }
+
+
+
+// Helpers
+//
+// 
+// {
+// "query": {
+//     "bool": {
+//     "must": {
+//         "match": {
+//         "post_title.autocomplete": "ΑΛΕΞΗΣ ΤΣΙΠ"
+//         }
+//     },
+//     "should": {
+//         "match": {
+//         "post_title": "ΑΛΕΞΗΣ ΤΣΙΠ"
+//         }
+//     }
+//     }
+// },
+// "_source": [
+//     "post_title"
+// ]
+// }

@@ -26,6 +26,7 @@ Route::get('/usernotifications/{id}', 'NotificationsController@index');
 
 Route::post('searchmessages', 'SearchController@searchMessages');
 Route::post('searchposts', 'SearchController@searchPosts');
+Route::get('autocomplete', 'SearchController@autoComplete');
 
 Route::resource('votes', 'VotesController');
 

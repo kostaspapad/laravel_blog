@@ -25,6 +25,7 @@
     </style>
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
     {{--  <link rel="stylesheet"          // Animate.css
     href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">  --}}
 
@@ -43,6 +44,7 @@
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}"></script>
     <script src="/vendor/unisharp/laravel-ckeditor/ckeditor.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
     <script type="text/javascript" src="{!! asset('js/script.js') !!}"></script>
     <script>
         CKEDITOR.replace( 'article-ckeditor' );
