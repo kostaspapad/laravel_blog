@@ -55,7 +55,7 @@ class SearchController extends Controller
                 'body' => [
                     'query' => [
                         'query_string' => [
-                            'query' => '*'.$searchTerm .'*',
+                            'query' => $searchTerm,
                             "fields"=> ["post_title", "post_body", "post_category"]
                         ]
                     ]

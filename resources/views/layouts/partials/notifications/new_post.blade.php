@@ -1,5 +1,3 @@
-{{--  If user opens the dropdown, mark notifications as read.  --}}
-{{Auth::user()->unreadNotifications->markAsRead()}}
 <div class="row">
     <a href="/posts/{{$notification->data['post']['id']}}">
         <div class="col-md-3">
@@ -11,7 +9,7 @@
     </a>
     {{--  @if($notification->data['message'][''])  --}}
     <div class="col-md-3">
-        {{--  <span class="hasbeenread glyphicon glyphicon-eye-open"></span>  --}}
+        <a href="{{url('usernotifications/'.$notification->id)}}"><span class="hasbeenread glyphicon glyphicon-eye-open"></span></a>
         
     </div>
 </div>

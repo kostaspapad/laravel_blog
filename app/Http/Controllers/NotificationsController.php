@@ -26,4 +26,22 @@ class NotificationsController extends Controller
         
         return view('usernotifications.index')->with('userNotification', $userNotification); 
     }
+
+    /**
+     * delete a specific notification
+     *
+     * @param $id
+     * @return mixed
+     */
+    public function delete($id) {
+        $user = \Auth::user();
+        $notification = $user->notifications()->where('id',$id)->first();
+        if ($notification)
+        {
+            $notification->delete();
+            
+        }
+        else
+            return back()->withErrors('we could not found the specified notification');
+    }
 }
